@@ -1,25 +1,23 @@
 "use client";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getAuthClient } from "@/lib/firebase";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Login() {
+export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const router = useRouter();
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
-
+    const handleLogin = async () => {
         try {
+            const auth = getAuthClient(); 
             await signInWithEmailAndPassword(auth, email, password);
-            router.push("/admin/new");
-        } catch (err) {
-            setError("Credenciales incorrectas");
+            router.push("/admin/dashboard"); 
+        } catch (err: any) {
+            setError(err.message);
         }
     };
 
