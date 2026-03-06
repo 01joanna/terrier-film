@@ -14,4 +14,7 @@ export interface Project {
     descripcion?: string;
     imagenes: string[];
     categoria: string[];
+    credits?: {
+        [role: string]: string[];
+    };
 }

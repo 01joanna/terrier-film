@@ -1,15 +1,29 @@
 "use client"
 import { useState, useEffect } from "react"
 import { db } from "@/lib/firebase"
-import { collection, getDocs, getFirestore } from "firebase/firestore"
+import { collection, getDocs, getFirestore, deleteDoc, doc } from "firebase/firestore"
 import { Project } from "@/types/Project"
 import Link from "next/link"
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export default function Work() {
     const [projects, setProjects] = useState<Project[]>([])
     const [active, setActive] = useState<"all" | "direction" | "production">("all")
     const [hovered, setHovered] = useState<Project | null>(null)
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
+    const [user, setUser] = useState<any>(null)
+
+    useEffect(() => {
+        const auth = getAuth()
+
+        const unsubscribe = onAuthStateChanged(auth, (u) => {
+            setUser(u)
+        })
+
+        return () => unsubscribe()
+    }, [])
+
+    console.log("User:", user)
 
     useEffect(() => {
         async function fetchProjects() {
@@ -39,6 +53,7 @@ export default function Work() {
                 })
 
                 setProjects(data)
+                console.log("Docs:", querySnapshot.size)
             } catch (error) {
                 console.error("Error fetching projects:", error)
             }
@@ -54,6 +69,18 @@ export default function Work() {
         return true
     })
         .sort((a, b) => Number(b.año) - Number(a.año))
+
+    async function deleteProject(id: string) {
+        if (!confirm("Delete this project?")) return
+
+        try {
+            await deleteDoc(doc(db, "proyectos", id))
+            setProjects((prev) => prev.filter((p) => p.id !== id))
+        } catch (error) {
+            console.error("Error deleting:", error)
+        }
+    }
+
 
     return (
         <section
@@ -142,7 +169,30 @@ export default function Work() {
                         <span>{project.direccion?.join(", ")}</span>
                         <span>{project.año}</span>
                         <span>[{project.categoria.join(", ")}]</span>
+                        {user && (
+                            <span className="flex gap-3 text-xs">
+                                <Link
+                                    href={`/admin/edit/${project.id}`}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="opacity-70 hover:opacity-100 mt-1"
+                                >
+                                    Edit
+                                </Link>
+
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        deleteProject(project.id)
+                                    }}
+                                    className="opacity-70 hover:opacity-100"
+                                >
+                                    Delete
+                                </button>
+                            </span>
+                        )}
                     </Link>
+
                 ))}
             </div>
 
