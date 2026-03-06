@@ -1,8 +1,8 @@
 export default function Contact() {
     return (
         <section className="w-screen h-screen flex flex-col px-20 py-20 gap-20">
-            <div className="w-2/3 mt-20">
-                <p className="text-justify text-md font-light font-inter">
+            <div className="w-4/5 mt-20">
+                <p className="text-justify text-md font-thin font-plex">
                     TERRIER FILM is a lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis
                     libero condimentum, suscipit quam vel, efficitur magna. Mauris consectetur porttitor
                     pellentesque. Vivamus maximus tortor mattis commodo posuere. Sed venenatis, odio sit amet
