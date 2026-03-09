@@ -57,7 +57,7 @@ export default function Home() {
             <Image
               src="/logo.png"
               alt="Logo"
-              width={300}
+              width={200}
               height={75}
               className="object-contain"
             /></Link>
