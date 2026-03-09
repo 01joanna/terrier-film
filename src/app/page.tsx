@@ -25,7 +25,7 @@ export default function Home() {
         if (projectsWithVideo.length > 0) {
           const randomProject =
             projectsWithVideo[
-              Math.floor(Math.random() * projectsWithVideo.length)
+            Math.floor(Math.random() * projectsWithVideo.length)
             ];
           setVideo(randomProject.reel!);
         }
@@ -53,13 +53,14 @@ export default function Home() {
 
       <header className="absolute left-0 w-full h-full flex gap-10 items-center px-10 py-6 z-20">
         <div>
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={300}
-            height={75}
-            className="object-contain"
-          />
+          <Link href={"/"}>
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={300}
+              height={75}
+              className="object-contain"
+            /></Link>
         </div>
 
         <nav>

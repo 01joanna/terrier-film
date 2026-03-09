@@ -24,13 +24,14 @@ export default function Header() {
     return (
         <header className="fixed top-0 left-0 mt-10 z-10 flex px-40 text-xs font-plex uppercase tracking-widest items-center gap-10 w-screen">
             <div>
-                <Image
-                    src="/logo.png"
-                    alt="Logo"
-                    width={300}
-                    height={75}
-                    className="object-contain"
-                />
+                <Link href={"/"}>
+                    <Image
+                        src="/logo.png"
+                        alt="Logo"
+                        width={300}
+                        height={75}
+                        className="object-contain"
+                    /></Link>
             </div>
 
             <nav className="">
