@@ -38,8 +38,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden">
-      {/* Vídeo de fondo */}
+    <main className="relative w-screen h-screen overflow-hidden z-20">
       {video && (
         <video
           autoPlay
@@ -52,8 +51,7 @@ export default function Home() {
         </video>
       )}
 
-      <header className="absolute left-0 gap-3 w-full h-full  flex items-center px-10 py-6 z-20">
-        {/* Logo */}
+      <header className="absolute left-0 w-full h-full flex gap-10 items-center px-10 py-6 z-20">
         <div>
           <Image
             src="/logo.png"
@@ -65,7 +63,7 @@ export default function Home() {
         </div>
 
         <nav>
-          <ul className="flex flex-col font-plex leading-4 text-white uppercase tracking-widest text-sm">
+          <ul className="flex font-plex leading-4 text-white tracking-widest text-sm font-light uppercase gap-10">
             <li>
               <Link href="/work" className="hover:opacity-70 transition">
                 Work
