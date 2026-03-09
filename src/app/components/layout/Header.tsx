@@ -35,7 +35,7 @@ export default function Header() {
             </div>
 
             <nav className="">
-                <ul className="flex gap-4 tracking-widest">
+                <ul className="flex flex-col gap-2 tracking-widest">
                     <li>
                         <Link href="/work">Work</Link>
                     </li>

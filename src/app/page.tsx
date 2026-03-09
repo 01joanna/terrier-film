@@ -64,7 +64,7 @@ export default function Home() {
         </div>
 
         <nav>
-          <ul className="flex font-plex leading-4 text-white tracking-widest text-sm font-light uppercase gap-10">
+          <ul className="flex flex-col font-plex leading-4 text-white tracking-widest text-sm font-light uppercase gap-2">
             <li>
               <Link href="/work" className="hover:opacity-70 transition">
                 Work
