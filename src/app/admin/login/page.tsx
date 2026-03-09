@@ -23,13 +23,13 @@ export default function LoginPage() {
     };
 
     return (
-        <form onSubmit={handleLogin} className="p-10 flex flex-col gap-4 pt-40">
+        <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full h-screen justify-center items-center">
             <input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="border p-3"
+                className="border p-3 w-[40%] rounded-sm"
             />
 
             <input
@@ -37,14 +37,14 @@ export default function LoginPage() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="border p-3"
+                className="border p-3 w-[40%] rounded-sm"
             />
 
             {error && <p className="text-red-500 text-xs">{error}</p>}
 
             <button
                 type="submit"
-                className="bg-black text-white p-3"
+                className="bg-white text-black py-3 px-20 rounded-sm "
             >
                 Entrar
             </button>
