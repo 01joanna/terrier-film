@@ -1,7 +1,7 @@
 "use client";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { getAuthClient } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -11,11 +11,12 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const router = useRouter();
 
-    const handleLogin = async () => {
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+
         try {
-            const auth = getAuthClient(); 
             await signInWithEmailAndPassword(auth, email, password);
-            router.push("/admin/dashboard"); 
+            router.push("/");
         } catch (err: any) {
             setError(err.message);
         }
@@ -30,6 +31,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="border p-3"
             />
+
             <input
                 type="password"
                 placeholder="Password"
@@ -37,8 +39,13 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="border p-3"
             />
+
             {error && <p className="text-red-500 text-xs">{error}</p>}
-            <button className="bg-black text-white p-3">
+
+            <button
+                type="submit"
+                className="bg-black text-white p-3"
+            >
                 Entrar
             </button>
         </form>

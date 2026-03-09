@@ -171,19 +171,22 @@ export default function Work() {
                         <span>[{project.categoria.join(", ")}]</span>
                         {user && (
                             <span className="flex gap-3 text-xs">
-                                <Link
-                                    href={`/admin/edit/${project.id}`}
-                                    onClick={(e) => e.stopPropagation()}
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        window.location.href = `/admin/edit/${project.id}`
+                                    }}
                                     className="opacity-70 hover:opacity-100 mt-1"
                                 >
                                     Edit
-                                </Link>
+                                </button>
 
                                 <button
                                     onClick={(e) => {
                                         e.preventDefault()
                                         e.stopPropagation()
-                                        deleteProject(project.id)
+                                        deleteProject(project.id!)
                                     }}
                                     className="opacity-70 hover:opacity-100"
                                 >
