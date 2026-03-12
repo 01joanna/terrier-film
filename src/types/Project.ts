@@ -1,20 +1,23 @@
-export interface Project {
+import { Credit } from "./Credit";
+
+export type Project = {
     id?: string;
     titulo: string;
     año: string;
     artista?: string;
+
     direccion?: string[];
     produccion?: string[];
-    direccionArte?: string[];
     direccionFoto?: string[];
+    direccionArte?: string[];
     editor?: string[];
-    otros?: string;
-    video: string;
-    reel?: string;
-    descripcion?: string;
-    imagenes: string[];
+
+    imagenes?: string[];
     categoria: string[];
-    credits?: {
-        [role: string]: string[];
-    };
-}
+
+    descripcion?: string;
+    video?: string;
+    reel?: string;
+
+    credits?: Credit[];
+};

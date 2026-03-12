@@ -93,6 +93,10 @@ export default function New() {
         if (isSubmitting) return;
         setIsSubmitting(true);
 
+        const creditsArray: Project["credits"] = Object.entries(credits).map(
+            ([role, people]) => ({ role, people })
+        )
+
         const formData = new FormData(e.currentTarget);
         const projectData: Project = {
             titulo: formData.get("titulo") as string,
@@ -103,13 +107,12 @@ export default function New() {
             direccionArte,
             direccionFoto,
             editor,
-            otros,
             reel: formData.get("reel") as string,
             video: formData.get("video") as string,
             descripcion: formData.get("descripcion") as string,
             imagenes: imagenes.filter(img => img !== ""),
             categoria,
-            credits
+            credits: creditsArray
         };
 
 

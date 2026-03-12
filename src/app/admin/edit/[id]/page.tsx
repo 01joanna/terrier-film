@@ -6,6 +6,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Project } from "@/types/Project";
 import { useAuth } from "@/hooks/useAuth";
+import { Credit } from "@/types/Credit";
 
 export default function EditProject() {
     const { user } = useAuth();
@@ -22,9 +23,8 @@ export default function EditProject() {
     const [editor, setEditor] = useState<string[]>([""]);
     const [imagenes, setImagenes] = useState<string[]>([""]);
     const [categoria, setCategoria] = useState<string[]>([]);
-    const [otros, setOtros] = useState<string>("");
     const [reel, setReel] = useState<string>("");
-    const [credits, setCredits] = useState<{ [role: string]: string[] }>({});
+    const [credits, setCredits] = useState<Credit[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Cargar proyecto desde Firestore
@@ -46,9 +46,18 @@ export default function EditProject() {
                 setEditor(data.editor || [""]);
                 setImagenes(data.imagenes || [""]);
                 setCategoria(data.categoria || []);
-                setOtros(data.otros || "");
                 setReel(data.reel || "");
-                setCredits(data.credits || {});
+                if (Array.isArray(data.credits)) {
+                    setCredits(data.credits);
+                } else if (data.credits) {
+                    const converted = Object.entries(data.credits).map(([role, people]) => ({
+                        role,
+                        people: people as string[]
+                    }));
+                    setCredits(converted);
+                } else {
+                    setCredits([]);
+                }
             } else {
                 alert("Proyecto no encontrado");
                 router.push("/");
@@ -57,21 +66,6 @@ export default function EditProject() {
 
         fetchProject();
     }, [id, router]);
-
-    if (!user) {
-        return (
-            <section className="w-screen h-screen flex flex-col items-center justify-center text-center text-gray-400">
-                <p className="text-lg uppercase mb-4">No autorizado</p>
-                <p className="text-sm text-gray-500">
-                    Solo el administrador puede acceder aquí.
-                </p>
-            </section>
-        );
-    }
-
-    if (!project) {
-        return <p className="p-10">Cargando proyecto...</p>;
-    }
 
     // Funciones para arrays dinámicos
     const handleArrayChange = (
@@ -84,6 +78,44 @@ export default function EditProject() {
             updated[index] = value;
             return updated;
         });
+    };
+
+    // Añadir persona a un rol
+    const addCreditPerson = (roleIndex: number) => {
+        setCredits(prev =>
+            prev.map((credit, i) =>
+                i === roleIndex
+                    ? { ...credit, people: [...credit.people, ""] }
+                    : credit
+            )
+        );
+    };
+
+    // Eliminar persona de un rol
+    const removeCreditPerson = (roleIndex: number, personIndex: number) => {
+        setCredits(prev =>
+            prev.map((credit, i) =>
+                i === roleIndex
+                    ? {
+                        ...credit,
+                        people: credit.people.filter((_, j) => j !== personIndex)
+                    }
+                    : credit
+            )
+        );
+    };
+
+    // Añadir un rol nuevo
+    const addCreditRole = () => {
+        setCredits(prev => [...prev, { role: "", people: [""] }]);
+    };
+
+    const handleRoleChange = (index: number, value: string) => {
+        setCredits(prev =>
+            prev.map((credit, i) =>
+                i === index ? { ...credit, role: value } : credit
+            )
+        );
     };
 
     const handleAddField = (setter: React.Dispatch<React.SetStateAction<string[]>>) =>
@@ -110,6 +142,25 @@ export default function EditProject() {
         );
     };
 
+    const handleCreditPersonChange = (
+        roleIndex: number,
+        personIndex: number,
+        value: string
+    ) => {
+        setCredits(prev =>
+            prev.map((credit, i) =>
+                i === roleIndex
+                    ? {
+                        ...credit,
+                        people: credit.people.map((p, j) =>
+                            j === personIndex ? value : p
+                        )
+                    }
+                    : credit
+            )
+        );
+    };
+
     // Actualizar proyecto
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -127,7 +178,6 @@ export default function EditProject() {
                 editor,
                 imagenes: imagenes.filter((img) => img !== ""),
                 categoria,
-                otros,
                 reel,
                 credits
             });
@@ -142,38 +192,20 @@ export default function EditProject() {
         }
     };
 
-    // Cambiar nombre de una persona en un rol
-    const handleCreditChange = (role: string, index: number, value: string) => {
-        setCredits(prev => ({
-            ...prev,
-            [role]: prev[role].map((p, i) => i === index ? value : p)
-        }));
-    };
+    if (!user) {
+        return (
+            <section className="w-screen h-screen flex flex-col items-center justify-center text-center text-gray-400">
+                <p className="text-lg uppercase mb-4">No autorizado</p>
+                <p className="text-sm text-gray-500">
+                    Solo el administrador puede acceder aquí.
+                </p>
+            </section>
+        );
+    }
 
-    // Añadir persona a un rol
-    const addCreditPerson = (role: string) => {
-        setCredits(prev => ({
-            ...prev,
-            [role]: [...(prev[role] || []), ""]
-        }));
-    };
-
-    // Eliminar persona de un rol
-    const removeCreditPerson = (role: string, index: number) => {
-        setCredits(prev => ({
-            ...prev,
-            [role]: prev[role].filter((_, i) => i !== index)
-        }));
-    };
-
-    // Añadir un rol nuevo
-    const addCreditRole = (role: string) => {
-        if (!role) return;
-        setCredits(prev => ({
-            ...prev,
-            [role]: [""]
-        }));
-    };
+    if (!project) {
+        return <p className="p-10">Cargando proyecto...</p>;
+    }
 
     return (
         <section className="w-screen min-h-screen flex flex-col justify-start items-center gap-10 font-plex pt-24 pb-20">
@@ -248,59 +280,63 @@ export default function EditProject() {
                                 </div>
                             ))}
 
-                            <textarea
-                                value={otros}
-                                onChange={(e) => setOtros(e.target.value)}
-                                placeholder="Otros créditos (ej: montaje, sonido, etc)"
-                                className="px-4 py-3 border border-gray-300 rounded text-xs text-white w-5/6 h-50"
-                            />
-
                             <div className="flex flex-col gap-4">
                                 <h2>Créditos</h2>
-                                {Object.entries(credits).map(([role, people], idx) => (
-                                    <div key={idx} className="flex flex-col gap-2">
-                                        <label className="text-xs text-gray-400">{role}</label>
-                                        {people.map((person, i) => (
-                                            <div key={i} className="flex gap-2">
+
+                                {credits.map((credit, roleIndex) => (
+                                    <div key={roleIndex} className="flex flex-col gap-2">
+
+                                        {/* EDITAR ROL */}
+                                        <input
+                                            type="text"
+                                            value={credit.role}
+                                            onChange={(e) => handleRoleChange(roleIndex, e.target.value)}
+                                            placeholder="Rol"
+                                            className="input flex-1 bg-gray-800 text-white text-xs"
+                                        />
+
+                                        {/* PERSONAS */}
+                                        {credit.people.map((person, personIndex) => (
+                                            <div key={personIndex} className="flex gap-2">
                                                 <input
                                                     type="text"
                                                     value={person}
-                                                    onChange={e => handleCreditChange(role, i, e.target.value)}
+                                                    onChange={(e) =>
+                                                        handleCreditPersonChange(roleIndex, personIndex, e.target.value)
+                                                    }
                                                     className="input flex-1 bg-gray-800 text-white text-xs"
                                                 />
-                                                {people.length > 1 && (
-                                                    <button type="button" onClick={() => removeCreditPerson(role, i)} className="btn-delete">
+
+                                                {credit.people.length >= 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeCreditPerson(roleIndex, personIndex)}
+                                                        className="btn-delete"
+                                                    >
                                                         Eliminar
                                                     </button>
                                                 )}
                                             </div>
                                         ))}
-                                        <button type="button" onClick={() => addCreditPerson(role)} className="btn-add">
+
+                                        <button
+                                            type="button"
+                                            onClick={() => addCreditPerson(roleIndex)}
+                                            className="btn-add"
+                                        >
                                             + Añadir persona
                                         </button>
+
                                     </div>
                                 ))}
 
-                                {/* Añadir rol nuevo */}
-                                <div className="flex gap-2 mt-2">
-                                    <input
-                                        type="text"
-                                        placeholder="Nuevo rol"
-                                        id="newRoleInput"
-                                        className="px-2 py-1 border rounded text-xs flex-1"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            const input = document.getElementById("newRoleInput") as HTMLInputElement;
-                                            addCreditRole(input.value);
-                                            input.value = "";
-                                        }}
-                                        className="btn-add"
-                                    >
-                                        + Añadir rol
-                                    </button>
-                                </div>
+                                <button
+                                    type="button"
+                                    onClick={addCreditRole}
+                                    className="btn-add mt-2"
+                                >
+                                    + Añadir rol
+                                </button>
                             </div>
                         </div>
 
