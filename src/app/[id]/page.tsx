@@ -150,6 +150,7 @@ export default function ProjectPage() {
 
             if (selectedImage) {
                 setSelectedImage(null)
+                return
             }
 
             if (panelMode === "stills" && stillsRef.current && !stillsRef.current.contains(target)) {
@@ -262,7 +263,7 @@ export default function ProjectPage() {
                     </div>
                 )}
 
-            <div className={`absolute bottom-2/9 z-50 left-20 right-20 flex flex-col gap-3 ${showUI ? "opacity-100" : "opacity-0"}`}>
+            <div className={`absolute bottom-2/9 z-100 left-20 right-20 flex flex-col gap-3 ${showUI ? "opacity-100" : "opacity-0"}`}>
                 <div className="flex items-center justify-between">
                     <div className="text-white font-plex font-thin text-sm">
                         {formatTime(currentTime)} - {formatTime(duration)}
@@ -292,7 +293,7 @@ export default function ProjectPage() {
                         {project.artista ? `, ${project.artista}` : ""}
                     </h1>
 
-                    <div className="flex gap-5 mt-2 font-plex font-light">
+                    <div className="flex gap-5 mt-2 font-plex font-thin">
                         <button
                             ref={creditsButtonRef}
                             onClick={() =>
@@ -300,7 +301,7 @@ export default function ProjectPage() {
                             }
                             className="cursor-pointer"
                         >
-                            CREDITS
+                            CREDITOS
                         </button>
 
                         <button
@@ -355,7 +356,7 @@ export default function ProjectPage() {
                     <img
                         src={selectedImage}
                         alt="Expanded still"
-                        className="max-w-[90vw] max-h-[90vh] object-contain rounded-xl shadow-2xl transform opacity-0 scale-95 animate-fade-zoom"
+                        className="max-w-[80vw] max-h-[80vh] object-contain rounded-xl shadow-2xl transform opacity-0 scale-95 animate-fade-zoom"
                         style={{
                             opacity: 1,
                             transform: "scale(1)",
