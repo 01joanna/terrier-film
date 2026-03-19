@@ -69,18 +69,18 @@ export default function ProjectPage() {
 
     useEffect(() => {
         if (!videoRef.current || !project) return
-    
+
         const player = new Player(videoRef.current)
         playerRef.current = player
-    
+
         player.ready().then(() => {
             player.setVolume(isMuted ? 0 : 1)
         })
-    
+
         player.on("play", () => setIsPlaying(true))
         player.on("pause", () => setIsPlaying(false))
         player.on("ended", () => setIsPlaying(false))
-    
+
         const interval = setInterval(async () => {
             if (!playerRef.current) return
             const time = await playerRef.current.getCurrentTime()
@@ -89,7 +89,7 @@ export default function ProjectPage() {
             setDuration(dur)
             setVideoProgress(dur > 0 ? time / dur : 0)
         }, 200)
-    
+
         return () => {
             clearInterval(interval)
             player.destroy()
@@ -103,7 +103,7 @@ export default function ProjectPage() {
 
     const toggleMute = async () => {
         if (!playerRef.current) return
-        await playerRef.current.ready() 
+        await playerRef.current.ready()
         if (isMuted) {
             await playerRef.current.setVolume(1)
             setIsMuted(false)
@@ -286,14 +286,15 @@ export default function ProjectPage() {
 
 
             <div className="absolute w-screen h-screen z-50 flex items-center justify-center px-20">
-                <div className={`w-1/2 uppercase transition-opacity duration-300 ${showUI ? "opacity-100" : "opacity-0"
+                <div className={`w-1/2 flex flex-col uppercase transition-opacity duration-300 ${showUI ? "opacity-100" : "opacity-0"
                     }`}>
                     <h1 className="text-6xl font-inter font-thin">
                         {project.titulo}
                         {project.artista ? `, ${project.artista}` : ""}
                     </h1>
+                    <p className="text-xl font-plex font-thin text-gray-200 mt-4">{project.año}</p>
 
-                    <div className="flex gap-5 mt-2 font-plex font-thin">
+                    <div className="flex gap-5 font-plex font-thin">
                         <button
                             ref={creditsButtonRef}
                             onClick={() =>
@@ -329,11 +330,66 @@ export default function ProjectPage() {
                                 }`}
                         >
                             <div className="text-sm font-thin font-plex uppercase flex flex-col justify-center items-center">
-                                {project.credits.map((credit, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex gap-2 justify-center items-start transition-opacity duration-300"
-                                    >
+
+                                {/* CAMPOS ANTIGUOS */}
+                                {project.direccion && project.direccion.length > 0 && (
+                                    <div className="flex gap-2">
+                                        <p className="font-bold">Direction</p>
+                                        <div className="flex flex-col">
+                                            {project.direccion.map((person, i) => (
+                                                <p key={i}>{person}</p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {project.produccion && project.produccion.length > 0 && (
+                                    <div className="flex gap-2">
+                                        <p className="font-bold">Production</p>
+                                        <div className="flex flex-col">
+                                            {project.produccion.map((person, i) => (
+                                                <p key={i}>{person}</p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {project.direccionFoto && project.direccionFoto.length > 0 && (
+                                    <div className="flex gap-2">
+                                        <p className="font-bold">DOP</p>
+                                        <div className="flex flex-col">
+                                            {project.direccionFoto.map((person, i) => (
+                                                <p key={i}>{person}</p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {project.direccionArte && project.direccionArte.length > 0 && (
+                                    <div className="flex gap-2">
+                                        <p className="font-bold">Art Direction</p>
+                                        <div className="flex flex-col">
+                                            {project.direccionArte.map((person, i) => (
+                                                <p key={i}>{person}</p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {project.editor && project.editor.length > 0 && (
+                                    <div className="flex gap-2">
+                                        <p className="font-bold">Editor</p>
+                                        <div className="flex flex-col">
+                                            {project.editor.map((person, i) => (
+                                                <p key={i}>{person}</p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* NUEVOS CREDITS */}
+                                {project.credits && project.credits.map((credit, index) => (
+                                    <div key={index} className="flex gap-2">
                                         <p className="font-bold">{credit.role}</p>
                                         <div className="flex flex-col">
                                             {credit.people.map((person, i) => (
@@ -342,6 +398,7 @@ export default function ProjectPage() {
                                         </div>
                                     </div>
                                 ))}
+
                             </div>
                         </div>
                     )}
