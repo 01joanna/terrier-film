@@ -50,39 +50,6 @@ export default function Home() {
           <source src={video} type="video/mp4" />
         </video>
       )}
-
-      <header className="absolute left-0 w-full h-full flex gap-10 items-center px-10 py-6 z-20">
-        <div>
-          <Link href={"/"}>
-            <Image
-              src="/logo.png"
-              alt="Logo"
-              width={200}
-              height={75}
-              className="object-contain"
-            /></Link>
-        </div>
-
-        <nav>
-          <ul className="flex flex-col font-plex leading-4 text-white tracking-widest text-sm font-light uppercase gap-2">
-            <li>
-              <Link href="/work" className="hover:opacity-70 transition">
-                Work
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:opacity-70 transition">
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/login" className="hover:opacity-70 transition">
-                Login
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </header>
     </main>
   );
 }

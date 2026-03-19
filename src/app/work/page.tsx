@@ -159,7 +159,7 @@ export default function Work() {
                 {filteredProjects.map((project) => (
                     <Link
                         key={project.id}
-                        href={`/${project.id}`}
+                        href={`/project/${project.id}`}
                         onMouseEnter={() => setHovered(project)}
                         onMouseLeave={() => setHovered(null)}
                         className="grid grid-cols-6 text-md hover:opacity-50 transition cursor-pointer font-inter font-thin"

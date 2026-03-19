@@ -9,10 +9,13 @@ import Player from "@vimeo/player"
 import { CiPause1, CiPlay1 } from "react-icons/ci"
 import { BiSolidVolumeMute } from "react-icons/bi";
 import { BiVolumeMute } from "react-icons/bi";
+import { useRouter } from "next/navigation"
+import { TfiClose } from "react-icons/tfi";
 
 export default function ProjectPage() {
     const { id } = useParams() as { id: string }
     const [project, setProject] = useState<Project | null>(null)
+    const router = useRouter()
 
     const [showUI, setShowUI] = useState(true)
     const timeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -214,14 +217,15 @@ export default function ProjectPage() {
 
     return (
         <section className="relative w-screen h-screen bg-black overflow-hidden z-0">
-            {/* VIDEO */}
-            <iframe
-                ref={videoRef}
-                className="absolute w-full h-full"
-                src={`${project.video}?autoplay=1&muted=1&background=1`}
-                allow="autoplay; fullscreen"
-                allowFullScreen
-            />
+            <div className="absolute w-full h-full pointer-events-none z-0">
+                <iframe
+                    ref={videoRef}
+                    className="w-full h-full pointer-events-auto"
+                    src={`${project.video}?autoplay=1&muted=&background=1`}
+                    allow="autoplay; fullscreen"
+                    allowFullScreen
+                />
+            </div>
 
             {/* OVERLAY HOVER */}
             <div
@@ -263,7 +267,7 @@ export default function ProjectPage() {
                     </div>
                 )}
 
-            <div className={`absolute bottom-0 z-100 left-0 right-0 flex flex-col gap-3 ${showUI ? "opacity-100" : "opacity-0"}`}>
+            <div className={`absolute bottom-8 z-100 left-5 right-5 flex flex-col gap-3 ${showUI ? "opacity-100" : "opacity-0"}`}>
                 <div className="flex items-center justify-between px-20">
                     <div className="text-white font-plex font-thin text-sm ">
                         {formatTime(currentTime)} - {formatTime(duration)}
@@ -276,9 +280,23 @@ export default function ProjectPage() {
                         {isMuted ? <BiVolumeMute /> : <BiSolidVolumeMute />}
                     </button>
                 </div>
-                <div className="h-[0.6px] bg-gray-600 ">
+                <div
+                    className="h-[2px] bg-gray-600 cursor-pointer relative mx-20"
+                    onClick={async (e) => {
+                        if (!playerRef.current) return;
+
+                        const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                        const clickX = e.clientX - rect.left; 
+                        const clickProgress = clickX / rect.width; 
+
+                        const duration = await playerRef.current.getDuration();
+                        const newTime = duration * clickProgress;
+                        await playerRef.current.setCurrentTime(newTime);
+                        setVideoProgress(clickProgress);
+                    }}
+                >
                     <div
-                        className="h-[0.6px] bg-white transition-all duration-200"
+                        className="h-[2px] bg-white transition-all duration-200"
                         style={{ width: `${videoProgress * 100}%` }}
                     />
                 </div>
@@ -324,67 +342,32 @@ export default function ProjectPage() {
 
                     {project.credits && (
                         <div
-                            className={`fixed inset-0 z-[150] flex items-center justify-center bg-transparent transition-opacity duration-300 ${panelMode === "credits"
+                            className={`fixed inset-0 top-80 z-[150] flex items-center justify-center bg-transparent transition-opacity duration-300 pb-15 ${panelMode === "credits"
                                 ? "opacity-100"
                                 : "opacity-0 pointer-events-none"
                                 }`}
                         >
-                            <div className="text-sm font-thin font-plex uppercase flex flex-col justify-center items-center">
+                            <div className="text-sm font-thin font-plex uppercase flex flex-col justify-center items-center pb-30">
 
-                                {/* CAMPOS ANTIGUOS */}
-                                {project.direccion && project.direccion.length > 0 && (
-                                    <div className="flex gap-2">
-                                        <p className="font-bold">Direction</p>
-                                        <div className="flex flex-col">
-                                            {project.direccion.map((person, i) => (
-                                                <p key={i}>{person}</p>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {project.produccion && project.produccion.length > 0 && (
-                                    <div className="flex gap-2">
-                                        <p className="font-bold">Production</p>
-                                        <div className="flex flex-col">
-                                            {project.produccion.map((person, i) => (
-                                                <p key={i}>{person}</p>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {project.direccionFoto && project.direccionFoto.length > 0 && (
-                                    <div className="flex gap-2">
-                                        <p className="font-bold">DOP</p>
-                                        <div className="flex flex-col">
-                                            {project.direccionFoto.map((person, i) => (
-                                                <p key={i}>{person}</p>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {project.direccionArte && project.direccionArte.length > 0 && (
-                                    <div className="flex gap-2">
-                                        <p className="font-bold">Art Direction</p>
-                                        <div className="flex flex-col">
-                                            {project.direccionArte.map((person, i) => (
-                                                <p key={i}>{person}</p>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {project.editor && project.editor.length > 0 && (
-                                    <div className="flex gap-2">
-                                        <p className="font-bold">Editor</p>
-                                        <div className="flex flex-col">
-                                            {project.editor.map((person, i) => (
-                                                <p key={i}>{person}</p>
-                                            ))}
-                                        </div>
-                                    </div>
+                                {/* CAMPOS ANTIGUOS FILTRADOS */}
+                                {[
+                                    { label: "Direction", data: project.direccion },
+                                    { label: "Production", data: project.produccion },
+                                    { label: "DOP", data: project.direccionFoto },
+                                    { label: "Art Direction", data: project.direccionArte },
+                                    { label: "Editor", data: project.editor },
+                                ].map(
+                                    (field, idx) =>
+                                        field.data && field.data.length > 0 && (
+                                            <div key={idx} className="flex gap-2">
+                                                <p className="font-bold">{field.label}</p>
+                                                <div className="flex flex-col">
+                                                    {field.data.map((person, i) => (
+                                                        <p key={i}>{person}</p>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )
                                 )}
 
                                 {/* NUEVOS CREDITS */}
@@ -426,6 +409,13 @@ export default function ProjectPage() {
                     />
                 </div>
             )}
+
+            <div
+                onClick={() => router.back()}
+                className={`absolute top-10 right-10 flex items-center justify-center gap-2 cursor-pointer p-2 z-[9999] text-white text-4xl font-thin font-plex uppercase tracking-widest transition-opacity duration-300 ${showUI ? "opacity-100" : "opacity-0"}`}
+            >
+                <TfiClose className="pointer-events-auto" />
+            </div>
         </section>
     )
 }   
