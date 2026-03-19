@@ -242,7 +242,7 @@ export default function ProjectPage() {
                 project.imagenes.length > 0 && (
                     <div
                         ref={stillsRef}
-                        className={`absolute bottom-2 left-0 w-screen max-h-40 py-2 flex gap-4 overflow-x-auto scrollbar-hide px-4 z-100 cursor-grab active:cursor-grabbing select-none transition-opacity duration-500 
+                        className={`absolute bottom-19 left-0 w-screen max-h-40 py-2 flex gap-4 overflow-x-auto scrollbar-hide px-4 z-100 cursor-grab active:cursor-grabbing select-none transition-opacity duration-500 
                         ${panelMode === "stills" ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
                             }`}
                     >
