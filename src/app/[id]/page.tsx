@@ -263,9 +263,9 @@ export default function ProjectPage() {
                     </div>
                 )}
 
-            <div className={`absolute bottom-2/9 z-100 left-20 right-20 flex flex-col gap-3 ${showUI ? "opacity-100" : "opacity-0"}`}>
-                <div className="flex items-center justify-between">
-                    <div className="text-white font-plex font-thin text-sm">
+            <div className={`absolute bottom-0 z-100 left-0 right-0 flex flex-col gap-3 ${showUI ? "opacity-100" : "opacity-0"}`}>
+                <div className="flex items-center justify-between px-20">
+                    <div className="text-white font-plex font-thin text-sm ">
                         {formatTime(currentTime)} - {formatTime(duration)}
                     </div>
 
