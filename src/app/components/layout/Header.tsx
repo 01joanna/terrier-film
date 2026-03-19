@@ -10,13 +10,8 @@ import { usePathname } from "next/navigation"
 export default function Header() {
     const [user, setUser] = useState<any>(null)
     const pathname = usePathname()
-
     const isHome = pathname === "/"
     const isProjectPage = pathname.startsWith("/project/")
-
-    // --------------------------
-    // Estados para el fade
-    // --------------------------
     const [showHeader, setShowHeader] = useState(true)
     const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -31,12 +26,10 @@ export default function Header() {
         await signOut(auth)
     }
 
-    // --------------------------
-    // Solo si estamos en un proyecto
-    // --------------------------
+
     useEffect(() => {
         if (!isProjectPage) {
-            setShowHeader(true) // Siempre visible fuera de proyectos
+            setShowHeader(true)
             return
         }
 
@@ -45,7 +38,6 @@ export default function Header() {
 
         const hideHeader = () => setShowHeader(false)
 
-        // Timeout inicial
         timeoutRef.current = setTimeout(hideHeader, 2000)
 
         const handleMouseMove = () => {
@@ -62,9 +54,6 @@ export default function Header() {
         }
     }, [pathname, isProjectPage])
 
-    // --------------------------
-    // Clases de transición y fade
-    // --------------------------
     const transitionClass = `transition-all duration-500 ease-out ${
         isProjectPage
             ? showHeader
@@ -73,12 +62,10 @@ export default function Header() {
             : "opacity-100"
     }`
 
-    // --------------------------
-    // HEADER HOME
-    // --------------------------
+
     if (isHome) {
         return (
-            <header className={`absolute left-0 w-full h-full flex gap-10 items-center px-10 py-6 z-20 ${transitionClass}`}>
+            <header className={`absolute left-0 w-full h-full flex gap-10 items-center px-10 py-6 z-50 ${transitionClass}`}>
                 <div>
                     <Link href={"/"}>
                         <Image src="/logo.png" alt="Logo" width={200} height={75} className="object-contain" />
@@ -95,9 +82,6 @@ export default function Header() {
         )
     }
 
-    // --------------------------
-    // HEADER NORMAL
-    // --------------------------
     return (
         <header className={`fixed top-0 left-0 mt-10 z-10 flex px-40 text-xs font-plex uppercase tracking-widest items-center gap-40 w-screen ${transitionClass}`}>
             <div>
