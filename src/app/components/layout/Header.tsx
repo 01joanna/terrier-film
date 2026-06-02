@@ -1,108 +1,89 @@
 "use client"
 
-import Link from "next/link"
-import { useEffect, useRef, useState } from "react"
-import { onAuthStateChanged, signOut } from "firebase/auth"
-import { auth } from "@/lib/firebase"
 import Image from "next/image"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 export default function Header() {
-    const [user, setUser] = useState<any>(null)
     const pathname = usePathname()
+
     const isHome = pathname === "/"
-    const isProjectPage = pathname.startsWith("/project/")
-    const [showHeader, setShowHeader] = useState(true)
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser)
-        })
-        return () => unsubscribe()
-    }, [])
-
-    const handleLogout = async () => {
-        await signOut(auth)
-    }
+    const isProjectDetail = pathname.startsWith("/project/")
 
 
-    useEffect(() => {
-        if (!isProjectPage) {
-            setShowHeader(true)
-            return
-        }
+    const links = [
+        { href: "/", label: "Home" },
+        { href: "/work", label: "Projects" },
+        { href: "/about", label: "About" },
+        { href: "/talents", label: "Talents" }
+    ]
 
-        setShowHeader(true)
-        if (timeoutRef.current) clearTimeout(timeoutRef.current)
-
-        const hideHeader = () => setShowHeader(false)
-
-        timeoutRef.current = setTimeout(hideHeader, 2000)
-
-        const handleMouseMove = () => {
-            setShowHeader(true)
-            if (timeoutRef.current) clearTimeout(timeoutRef.current)
-            timeoutRef.current = setTimeout(hideHeader, 2000)
-        }
-
-        window.addEventListener("mousemove", handleMouseMove)
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove)
-            if (timeoutRef.current) clearTimeout(timeoutRef.current)
-        }
-    }, [pathname, isProjectPage])
-
-    const transitionClass = `transition-all duration-500 ease-out ${
-        isProjectPage
-            ? showHeader
-                ? "opacity-100 pointer-events-auto"
-                : "opacity-0 pointer-events-none"
-            : "opacity-100"
-    }`
-
-
-    if (isHome) {
-        return (
-            <header className={`absolute left-0 w-full h-full flex gap-10 items-center px-10 py-6 z-50 ${transitionClass}`}>
-                <div>
-                    <Link href={"/"}>
-                        <Image src="/logo.png" alt="Logo" width={200} height={75} className="object-contain" />
-                    </Link>
-                </div>
-                <nav>
-                    <ul className="flex flex-col font-plex leading-4 text-white tracking-widest text-sm font-light uppercase gap-2">
-                        <li><Link href="/work">Work</Link></li>
-                        <li><Link href="/contact">Contact</Link></li>
-                        <li><Link href="/">Talents</Link></li>
-                    </ul>
-                </nav>
-            </header>
-        )
-    }
+    if (isProjectDetail) return null
 
     return (
-        <header className={`fixed top-0 left-0 mt-10 z-10 flex px-40 text-xs font-plex uppercase tracking-widest items-center gap-40 w-screen ${transitionClass}`}>
-            <div>
-                <Link href={"/"}>
-                    <Image src="/logo.png" alt="Logo" width={200} height={75} className="object-contain" />
-                </Link>
+        <header
+            className={`
+        fixed inset-0 z-[9999] pointer-events-none mx-20
+        transition-all duration-700 ease-in-out
+    `}
+        >
+
+            {/* LOGO */}
+            <div
+                className={`
+        pointer-events-auto absolute left-20
+        transition-all duration-1000 ease-[cubic-bezier(.22,1,.36,1)]
+        ${
+            isHome
+                ? "top-1/2 -translate-y-1/2 scale-100"
+                : "top-10 translate-y-0 scale-140"
+        }
+                    
+    `}
+            >
+                <Image src="/logo.png" alt="logo" width={200} height={200} />
             </div>
-            <nav>
-                <ul className="flex gap-7 tracking-widest">
-                    <li><Link href="/work">Work</Link></li>
-                    <li><Link href="/contact">Contact</Link></li>
-                    <li><Link href="/">Talents</Link></li>
-                </ul>
-            </nav>
-            {/* <div>
-                {user ? (
-                    <button onClick={handleLogout}>Logout</button>
-                ) : (
-                    <Link href="/admin/login">Login</Link>
-                )}
-            </div> */}
+
+            {/* NAV */}
+            <div
+                className={`
+        pointer-events-auto absolute right-20
+        transition-all duration-1000 ease-[cubic-bezier(.22,1,.36,1)]
+        ${isHome
+                        ? "top-1/2 -translate-y-1/2"
+                        : "top-10 translate-y-0 "
+                    }
+    `}
+            >
+                <nav className="uppercase text-xs text-white opacity-80 font-plex font-light tracking-[0.1rem]">
+                    <ul className="flex gap-9">
+                        {links.map(link => {
+                            const isActive = pathname === link.href
+
+                            return (
+                                <li key={link.href} className="relative flex items-center">
+                                    {isActive && (
+                                        <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-white" />
+                                    )}
+
+                                    <Link
+                                        href={link.href}
+                                        className={`
+                                            transition-all duration-300
+                                            ${isActive
+                                                ? "text-white opacity-100"
+                                                : "text-white/60 opacity-70"
+                                            }
+                                        `}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                </li>
+                            )
+                        })}
+                    </ul>
+                </nav>
+            </div>
         </header>
     )
 }

@@ -1,4 +1,4 @@
-export default function Contact() {
+export default function About() {
     return (
         <section className="w-screen h-screen flex flex-col px-20 py-20 gap-20">
             <div className="w-4/5 mt-20">

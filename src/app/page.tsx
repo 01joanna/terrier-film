@@ -1,55 +1,37 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
-import { Project } from "@/types/Project";
+import { useAppSelector } from "@/store/hooks"
+import { CAROUSEL_ELEMENTS } from "@/config/carousel"
+import Carousel from "@/app/components/layout/Carousel"
+
 
 export default function Home() {
-  const [video, setVideo] = useState<string | null>(null);
+    const { items, activeCarouselIndex } = useAppSelector(
+        state => state.projects
+    )
 
-  useEffect(() => {
-    const fetchVideo = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "proyectos"));
+    const globalIndex = CAROUSEL_ELEMENTS[activeCarouselIndex]
+    const currentProject = items[globalIndex]
 
-        const projects: Project[] = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Project[];
+    if (!currentProject) {
+        return <div className="w-screen h-screen bg-black" />
+    }
 
-        const projectsWithVideo = projects.filter(p => p.reel);
+    return (
+      <>
+        <div className="relative w-screen h-screen overflow-hidden bg-black">
+            <iframe
+                key={currentProject.id}
+                src={`${currentProject.video}?autoplay=1&muted=1&background=1`}
+                className="w-full h-full"
+                allow="autoplay; fullscreen"
+            />
+        </div>
 
-        if (projectsWithVideo.length > 0) {
-          const randomProject =
-            projectsWithVideo[
-            Math.floor(Math.random() * projectsWithVideo.length)
-            ];
-          setVideo(randomProject.reel!);
-        }
-      } catch (error) {
-        console.error("Error fetching video:", error);
-      }
-    };
-
-    fetchVideo();
-  }, []);
-
-  return (
-    <main className="relative w-screen h-screen overflow-hidden z-20">
-      {video && (
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
-        >
-          <source src={video} type="video/mp4" />
-        </video>
-      )}
-    </main>
-  );
+                    {/* CENTER */}
+                    <div className="pointer-events-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                <Carousel />
+            </div>
+        </>
+    )
 }

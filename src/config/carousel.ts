@@ -1,0 +1,1 @@
+export const CAROUSEL_ELEMENTS = [0, 5, 7, 8, 9]
