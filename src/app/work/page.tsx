@@ -5,6 +5,8 @@ import { collection, getDocs, getFirestore, deleteDoc, doc } from "firebase/fire
 import { Project } from "@/types/Project"
 import Link from "next/link"
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { motion, Variants } from "framer-motion"
+import { useRouter } from "next/navigation"
 
 export default function Work() {
     const [projects, setProjects] = useState<Project[]>([])
@@ -12,6 +14,9 @@ export default function Work() {
     const [hovered, setHovered] = useState<Project | null>(null)
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
     const [user, setUser] = useState<any>(null)
+
+    const router = useRouter()
+const [leaving, setLeaving] = useState(false)
 
     useEffect(() => {
         const auth = getAuth()
@@ -81,6 +86,42 @@ export default function Work() {
         }
     }
 
+    const container = {
+        hidden: {},
+        show: {
+            transition: {
+                staggerChildren: 0.05,
+            },
+        },
+    }
+
+    const item: Variants = {
+        hidden: {
+            opacity: 0,
+            y: 30,
+        },
+        show: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.8,
+                // delay: index * 0.03,
+                ease: [0.22, 1, 0.36, 1],
+            },
+
+        },
+    }
+
+    const goToProject = (id?: string) => {
+        if (!id) return
+    
+        setLeaving(true)
+    
+        setTimeout(() => {
+            router.push(`/project/${id}`)
+        }, 500)
+    }
+
 
     return (
         <section
@@ -112,11 +153,12 @@ export default function Work() {
 
                     <li
                         onClick={() => setActive("all")}
-                        className={`cursor-pointer transition 
-                ${active === "all"
-                                ? "text-white font-light"
-                                : "opacity-70 font-thin hover:opacity-100"}
-            `}
+                        className={`
+        cursor-pointer uppercase
+        ${active === "all"
+                                ? "opacity-100"
+                                : "opacity-60 hover:opacity-100"}
+    `}
                     >
                         See All
                     </li>
@@ -146,7 +188,7 @@ export default function Work() {
                 </ul>
             </nav>
 
-            <div className="grid grid-cols-6 text-sm uppercase tracking-widest opacity-60 pb-4 font-thin font-plex">
+            <div className="grid grid-cols-5 text-sm uppercase tracking-widest opacity-60 pb-4 font-thin font-plex">
                 <span>Project</span>
                 <span>Client</span>
                 <span>Director</span>
@@ -155,47 +197,60 @@ export default function Work() {
             </div>
 
             {/* PROJECT ROWS */}
+            {/* PROJECT ROWS */}
             <div>
-                {filteredProjects.map((project) => (
-                    <Link
+                {filteredProjects.map((project, index) => (
+                    <motion.div
                         key={project.id}
-                        href={`/project/${project.id}`}
-                        onMouseEnter={() => setHovered(project)}
-                        onMouseLeave={() => setHovered(null)}
-                        className="grid grid-cols-6 text-md hover:opacity-50 transition cursor-pointer font-inter font-thin"
+                        initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        transition={{
+                            duration: 0.7,
+                            delay: leaving ? index * 0.02 : index * 0.04,
+                            ease: [0.76, 0, 0.24, 1],
+                        }}
+                        whileInView={{ opacity: 1, y: 0 }}
+viewport={{ once: true, amount: 0.2 }}
                     >
-                        <span>{project.titulo}</span>
-                        <span>{project.artista}</span>
-                        <span>{project.direccion?.join(", ")}</span>
-                        <span>{project.año}</span>
-                        <span>[{project.categoria.join(", ")}]</span>
-                        {user && (
-                            <span className="flex gap-3 text-xs">
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        window.location.href = `/admin/edit/${project.id}`
-                                    }}
-                                    className="opacity-70 hover:opacity-100 mt-1"
-                                >
-                                    Edit
-                                </button>
+                        <div
+                            onClick={() => goToProject(project.id)}
+                            onMouseEnter={() => setHovered(project)}
+                            onMouseLeave={() => setHovered(null)}
+                            className={`grid grid-cols-5 transition cursor-pointer font-plex font-thin text-sm ${
+                                leaving ? "pointer-events-none" : ""
+                            }`}
+                        >
+                            <span>{project.titulo}</span>
+                            <span>{project.artista}</span>
+                            <span>{project.direccion?.join(", ")}</span>
+                            <span>{project.año}</span>
+                            <span>[{project.categoria.join(", ")}]</span>
 
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        deleteProject(project.id!)
-                                    }}
-                                    className="opacity-70 hover:opacity-100"
-                                >
-                                    Delete
-                                </button>
-                            </span>
-                        )}
-                    </Link>
+                            {user && (
+                                <span className="flex gap-3 text-xs">
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            window.location.href = `/admin/edit/${project.id}`
+                                        }}
+                                    >
+                                        Edit
+                                    </button>
 
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            deleteProject(project.id!)
+                                        }}
+                                    >
+                                        Delete
+                                    </button>
+                                </span>
+                            )}
+                        </div>
+                    </motion.div>
                 ))}
             </div>
 
