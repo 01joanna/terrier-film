@@ -3,9 +3,11 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { setActiveCarouselIndex } from "@/store/slices/projectsSlice"
 import { CAROUSEL_ELEMENTS } from "@/config/carousel"
+import { useRouter } from "next/navigation"
 
 export default function Carousel() {
     const dispatch = useAppDispatch()
+    const router = useRouter()
     const { items, activeCarouselIndex } = useAppSelector(
         state => state.projects
     )
@@ -47,7 +49,8 @@ export default function Carousel() {
                 return (
                     <button
                         key={project.id}
-                        onClick={() =>
+                        onClick={() => router.push(`/project/${project.id}`)}
+                        onMouseEnter={() =>
                             dispatch(setActiveCarouselIndex(index))
                         }
                         className="absolute left-1/2 top-1/2 transition-all duration-700"

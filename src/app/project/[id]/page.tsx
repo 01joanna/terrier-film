@@ -11,6 +11,7 @@ import { BiSolidVolumeMute } from "react-icons/bi";
 import { BiVolumeMute } from "react-icons/bi";
 import { useRouter } from "next/navigation"
 import { TfiClose } from "react-icons/tfi";
+import { MdFullscreen, MdFullscreenExit } from "react-icons/md";
 
 export default function ProjectPage() {
     const { id } = useParams() as { id: string }
@@ -36,6 +37,7 @@ export default function ProjectPage() {
     const [currentTime, setCurrentTime] = useState(0)
     const [duration, setDuration] = useState(0)
     const [isMuted, setIsMuted] = useState(true)
+    const [isFullscreen, setIsFullscreen] = useState(false)
 
 
     // FETCH PROJECT
@@ -213,6 +215,31 @@ export default function ProjectPage() {
         }
     }, [panelMode])
 
+    const toggleFullscreen = async () => {
+        if (!document.fullscreenElement) {
+            await document.documentElement.requestFullscreen()
+            setIsFullscreen(true)
+        } else {
+            await document.exitFullscreen()
+            setIsFullscreen(false)
+        }
+    }
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement)
+        }
+
+        document.addEventListener("fullscreenchange", handleFullscreenChange)
+
+        return () => {
+            document.removeEventListener(
+                "fullscreenchange",
+                handleFullscreenChange
+            )
+        }
+    }, [])
+
     if (!project) return null
 
     return (
@@ -273,12 +300,21 @@ export default function ProjectPage() {
                         {formatTime(currentTime)} - {formatTime(duration)}
                     </div>
 
-                    <button
+                    <div className="flex gap-4">
+                        <button
                         className="text-gray-300 text-xl cursor-pointer"
                         onClick={toggleMute}
                     >
                         {isMuted ? <BiVolumeMute /> : <BiSolidVolumeMute />}
                     </button>
+
+                    <button
+                        className="text-gray-300 text-2xl cursor-pointer"
+                        onClick={toggleFullscreen}
+                    >
+                        {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
+                    </button>
+                    </div>
                 </div>
                 <div
                     className="h-[2px] bg-gray-600 cursor-pointer relative mx-20"
@@ -286,8 +322,8 @@ export default function ProjectPage() {
                         if (!playerRef.current) return;
 
                         const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-                        const clickX = e.clientX - rect.left; 
-                        const clickProgress = clickX / rect.width; 
+                        const clickX = e.clientX - rect.left;
+                        const clickProgress = clickX / rect.width;
 
                         const duration = await playerRef.current.getDuration();
                         const newTime = duration * clickProgress;
@@ -410,12 +446,15 @@ export default function ProjectPage() {
                 </div>
             )}
 
-            <div
-                onClick={() => router.back()}
-                className={`absolute top-10 right-10 flex items-center justify-center gap-2 cursor-pointer p-2 z-[9999] text-white text-4xl font-thin font-plex uppercase tracking-widest transition-opacity duration-300 ${showUI ? "opacity-100" : "opacity-0"}`}
-            >
-                <TfiClose className="pointer-events-auto" />
-            </div>
+            {!selectedImage && (
+                <div
+                    onClick={() => router.back()}
+                    className={`absolute top-10 right-10 flex items-center justify-center gap-2 cursor-pointer p-2 z-[9999] text-white text-4xl font-thin font-plex uppercase tracking-widest transition-opacity duration-300 ${showUI ? "opacity-100" : "opacity-0"
+                        }`}
+                >
+                    <TfiClose className="pointer-events-auto" />
+                </div>
+            )}
         </section>
     )
 }   
