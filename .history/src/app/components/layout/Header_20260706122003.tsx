@@ -102,7 +102,7 @@ useEffect(() => {
 
                         {/* 🔥 HEADER REAL */}
                         <div
-                className={`fixed inset-0 mx-30
+                className={`fixed inset-0 mx-40
                     transition-all duration-700 ease-in-out
                     ${loading ? "opacity-0 scale-105" : "opacity-100 scale-100"}
                 `}

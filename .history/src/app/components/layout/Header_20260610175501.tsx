@@ -57,6 +57,7 @@ useEffect(() => {
         { href: "/", label: "Home" },
         { href: "/work", label: "Projects" },
         { href: "/about", label: "About" },
+        { href: "/talents", label: "Talents" }
     ]
 
     if (isProjectDetail) return null
@@ -102,7 +103,7 @@ useEffect(() => {
 
                         {/* 🔥 HEADER REAL */}
                         <div
-                className={`fixed inset-0 mx-30
+                className={`fixed inset-0
                     transition-all duration-700 ease-in-out
                     ${loading ? "opacity-0 scale-105" : "opacity-100 scale-100"}
                 `}

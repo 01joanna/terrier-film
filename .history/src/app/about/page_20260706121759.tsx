@@ -86,7 +86,7 @@ export default function About() {
                             }
                         ].map((person, i) => (
                             <motion.div key={i} variants={block}>
-                                <motion.p variants={line} className="uppercase font-thin">{person.name}</motion.p>
+                                <motion.p variants={line}>{person.name}</motion.p>
                                 <motion.p variants={line}>{person.role}</motion.p>
                                 <motion.p variants={line}>{person.mail}</motion.p>
                             </motion.div>
@@ -101,14 +101,14 @@ export default function About() {
                             Office
                         </h3>
 
-                        <motion.div className="flex flex-col font-light">
+                        <motion.div className="flex flex-col gap-1">
                             <motion.p variants={line}>Calle Definición 203</motion.p>
                             <motion.p variants={line}>08010 Barcelona</motion.p>
-                            <motion.p variants={line}>Barcelona, España</motion.p>
+                            <motion.p variants={line}>España</motion.p>
                         </motion.div>
                     </motion.div>
 
-                    <motion.div className="flex flex-col font-thin uppercase" variants={block}>
+                    <motion.div className="flex flex-col gap-2 uppercase" variants={block}>
                         <motion.a variants={line}>Vimeo</motion.a>
                         <motion.a variants={line}>Instagram</motion.a>
                     </motion.div>

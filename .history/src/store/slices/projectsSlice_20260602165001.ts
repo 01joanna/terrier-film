@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { Project } from "@/types/Project"
+import { CAROUSEL_ELEMENTS } from "@/config/carousel"
 
 type ProjectsState = {
     items: Project[]
@@ -25,19 +26,13 @@ const projectsSlice = createSlice({
         },
 
         setNext: (state) => {
-            const max = state.items.filter(project => project.featured).length
-
-            if (max === 0) return
-
+            const max = CAROUSEL_ELEMENTS.length
             state.activeCarouselIndex =
                 (state.activeCarouselIndex + 1) % max
         },
 
         setPrev: (state) => {
-            const max = state.items.filter(project => project.featured).length
-
-            if (max === 0) return
-
+            const max = CAROUSEL_ELEMENTS.length
             state.activeCarouselIndex =
                 (state.activeCarouselIndex - 1 + max) % max
         }

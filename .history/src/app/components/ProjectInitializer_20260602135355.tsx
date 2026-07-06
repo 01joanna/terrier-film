@@ -34,7 +34,6 @@ export default function ProjectInitializer() {
                     categoria: d.categoria ?? [],
                     video: d.video ?? "",
                     imagenes: d.imagenes ?? [],
-                    featured: d.featured ?? false,
                 }
             })
 

@@ -57,7 +57,6 @@ export default function Work() {
                         descripcion: d.descripcion ?? "",
                         imagenes: d.imagenes ?? [],
                         categoria: d.categoria ?? [],
-                        featured: d.featured ?? false
                     }
                 })
 
@@ -125,19 +124,12 @@ export default function Work() {
             router.push(`/project/${id}`)
         }, 500)
     }
-    const formatDirector = (directors?: string[]) => {
-        if (!directors?.length) return ""
-        const normalized = [...directors].sort().join(",")
-        if (normalized === ["Alejo Ayala", "Arturo Casaú"].sort().join(",")) {
-            return "Terrier"
-        }
-        return directors.join(", ")
-    }
+
 
     return (
         <section
             onMouseMove={(e) => setCursorPos({ x: e.clientX, y: e.clientY })}
-            className="relative w-screen min-h-screen px-10 pb-20 flex flex-col justify-end overflow-hidden">
+            className="relative w-screen min-h-screen px-10 pb-10 flex flex-col justify-end overflow-hidden">
 
             {/* IMAGEN DE FONDO */}
             {hovered?.imagenes?.[0] && (
@@ -234,14 +226,13 @@ export default function Work() {
                         >
                             <span>{project.titulo}</span>
                             <span>{project.artista}</span>
-                            <span>{formatDirector(project.direccion)}</span>
+                            <span>{project.direccion?.join(", ")}</span>
                             <span>{project.año}</span>
                             <span>[{project.categoria.join(", ")}]</span>
 
                             {user && (
                                 <span className="flex gap-3 text-xs">
                                     <button
-                                        className="cursor-pointer"
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()
@@ -252,7 +243,6 @@ export default function Work() {
                                     </button>
 
                                     <button
-                                        className="cursor-pointer"
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()

@@ -57,7 +57,6 @@ export default function Work() {
                         descripcion: d.descripcion ?? "",
                         imagenes: d.imagenes ?? [],
                         categoria: d.categoria ?? [],
-                        featured: d.featured ?? false
                     }
                 })
 
@@ -125,13 +124,17 @@ export default function Work() {
             router.push(`/project/${id}`)
         }, 500)
     }
+
     const formatDirector = (directors?: string[]) => {
-        if (!directors?.length) return ""
-        const normalized = [...directors].sort().join(",")
-        if (normalized === ["Alejo Ayala", "Arturo Casaú"].sort().join(",")) {
+        if (!directors) return ""
+    
+        const joined = directors.join(", ")
+    
+        if (joined === "Alejo Ayala, Arturo Casaú") {
             return "Terrier"
         }
-        return directors.join(", ")
+    
+        return joined
     }
 
     return (
@@ -241,7 +244,6 @@ export default function Work() {
                             {user && (
                                 <span className="flex gap-3 text-xs">
                                     <button
-                                        className="cursor-pointer"
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()
@@ -252,7 +254,6 @@ export default function Work() {
                                     </button>
 
                                     <button
-                                        className="cursor-pointer"
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()

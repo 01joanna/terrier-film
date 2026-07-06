@@ -2,16 +2,22 @@
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { setActiveCarouselIndex } from "@/store/slices/projectsSlice"
+import { CAROUSEL_ELEMENTS } from "@/config/carousel"
 import { useRouter } from "next/navigation"
 
 export default function Carousel() {
     const dispatch = useAppDispatch()
     const router = useRouter()
-
     const { items, activeCarouselIndex } = useAppSelector(
         state => state.projects
     )
-    const featured = items.filter(project => project.featured)
+
+    const featured = CAROUSEL_ELEMENTS
+        .map(i => ({
+            project: items[i],
+            globalIndex: i
+        }))
+        .filter(p => p.project)
 
     const center = (featured.length - 1) / 2
     const radiusX = 220
@@ -29,7 +35,7 @@ export default function Carousel() {
                 </svg>
             </div>
 
-            {featured.map((project, index) => {
+            {featured.map(({ project, globalIndex }, index) => {
                 const offsetIndex = index - center
                 const angleStep = Math.PI / (featured.length - 1)
                 const angle = offsetIndex * angleStep
@@ -37,7 +43,8 @@ export default function Carousel() {
                 const x = -Math.cos(angle) * radiusX
                 const y = Math.sin(angle) * radiusY
 
-                const isActive = activeCarouselIndex === index
+                const isActive =
+                    CAROUSEL_ELEMENTS[activeCarouselIndex] === globalIndex
 
                 return (
                     <button
@@ -48,19 +55,15 @@ export default function Carousel() {
                         }
                         className="absolute left-1/2 top-1/2 transition-all duration-700"
                         style={{
-                            transform: `translate(${x}px, ${y}px)`,
+                            transform: `translate(${x}px, ${y}px)`
                         }}
                     >
                         <span
                             className={`
-                                relative uppercase font-light text-xs tracking-[0.3em]
-                                transition-all duration-700
-                                ${
-                                    isActive
-                                        ? "text-white opacity-100"
-                                        : "text-white/70 opacity-70"
-                                }
-                            `}
+        relative uppercase font-light text-xs tracking-[0.3em]
+        transition-all duration-700
+        ${isActive ? "text-white opacity-100" : "text-white/70 opacity-70"}
+    `}
                         >
                             {isActive && (
                                 <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-white" />

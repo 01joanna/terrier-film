@@ -11,6 +11,7 @@ export default function Carousel() {
     const { items, activeCarouselIndex } = useAppSelector(
         state => state.projects
     )
+        console.log(items)
     const featured = items.filter(project => project.featured)
 
     const center = (featured.length - 1) / 2

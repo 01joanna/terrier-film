@@ -101,10 +101,10 @@ export default function About() {
                             Office
                         </h3>
 
-                        <motion.div className="flex flex-col font-light">
+                        <motion.div className="flex flex-col gap-1">
                             <motion.p variants={line}>Calle Definición 203</motion.p>
                             <motion.p variants={line}>08010 Barcelona</motion.p>
-                            <motion.p variants={line}>Barcelona, España</motion.p>
+                            <motion.p variants={line}>España</motion.p>
                         </motion.div>
                     </motion.div>
 

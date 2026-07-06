@@ -7,7 +7,9 @@ export default function Home() {
     const { items, activeCarouselIndex } = useAppSelector(
         state => state.projects
     )
+    console.log(items)
     const featured = items.filter(project => project.featured)
+
     const currentProject = featured[activeCarouselIndex]
 
     if (!currentProject) {

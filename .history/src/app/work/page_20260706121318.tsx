@@ -57,7 +57,7 @@ export default function Work() {
                         descripcion: d.descripcion ?? "",
                         imagenes: d.imagenes ?? [],
                         categoria: d.categoria ?? [],
-                        featured: d.featured ?? false
+                        featured: d.featured ?? false;
                     }
                 })
 

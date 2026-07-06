@@ -19,7 +19,7 @@ export default function Work() {
     const [user, setUser] = useState<any>(null)
 
     const router = useRouter()
-    const [leaving, setLeaving] = useState(false)
+const [leaving, setLeaving] = useState(false)
 
     useEffect(() => {
         const auth = getAuth()
@@ -57,7 +57,6 @@ export default function Work() {
                         descripcion: d.descripcion ?? "",
                         imagenes: d.imagenes ?? [],
                         categoria: d.categoria ?? [],
-                        featured: d.featured ?? false
                     }
                 })
 
@@ -118,26 +117,19 @@ export default function Work() {
 
     const goToProject = (id?: string) => {
         if (!id) return
-
+    
         setLeaving(true)
-
+    
         setTimeout(() => {
             router.push(`/project/${id}`)
         }, 500)
     }
-    const formatDirector = (directors?: string[]) => {
-        if (!directors?.length) return ""
-        const normalized = [...directors].sort().join(",")
-        if (normalized === ["Alejo Ayala", "Arturo Casaú"].sort().join(",")) {
-            return "Terrier"
-        }
-        return directors.join(", ")
-    }
+
 
     return (
         <section
             onMouseMove={(e) => setCursorPos({ x: e.clientX, y: e.clientY })}
-            className="relative w-screen min-h-screen px-10 pb-20 flex flex-col justify-end overflow-hidden">
+            className="relative w-screen min-h-screen px-10 pb-10 flex flex-col justify-end overflow-hidden">
 
             {/* IMAGEN DE FONDO */}
             {hovered?.imagenes?.[0] && (
@@ -199,10 +191,7 @@ export default function Work() {
                 </ul>
             </nav>
 
-            <div
-                className={`grid ${user ? "grid-cols-6" : "grid-cols-5"
-                    } text-sm uppercase tracking-widest opacity-60 pb-4 font-thin font-plex`}
-            >
+            <div className="grid grid-cols-5 text-sm uppercase tracking-widest opacity-60 pb-4 font-thin font-plex">
                 <span>Project</span>
                 <span>Client</span>
                 <span>Director</span>
@@ -210,6 +199,8 @@ export default function Work() {
                 <span>Category</span>
             </div>
 
+            {/* PROJECT ROWS */}
+            {/* PROJECT ROWS */}
             <div>
                 {filteredProjects.map((project, index) => (
                     <motion.div
@@ -222,26 +213,25 @@ export default function Work() {
                             ease: [0.76, 0, 0.24, 1],
                         }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.2 }}
+viewport={{ once: true, amount: 0.2 }}
                     >
                         <div
                             onClick={() => goToProject(project.id)}
                             onMouseEnter={() => setHovered(project)}
                             onMouseLeave={() => setHovered(null)}
-                            className={`grid ${user ? "grid-cols-6" : "grid-cols-5"
-                                } transition cursor-pointer font-plex font-thin text-sm ${leaving ? "pointer-events-none" : ""
-                                }`}
+                            className={`grid grid-cols-5 transition cursor-pointer font-plex font-thin text-sm ${
+                                leaving ? "pointer-events-none" : ""
+                            }`}
                         >
                             <span>{project.titulo}</span>
                             <span>{project.artista}</span>
-                            <span>{formatDirector(project.direccion)}</span>
+                            <span>{project.direccion?.join(", ")}</span>
                             <span>{project.año}</span>
                             <span>[{project.categoria.join(", ")}]</span>
 
                             {user && (
                                 <span className="flex gap-3 text-xs">
                                     <button
-                                        className="cursor-pointer"
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()
@@ -252,7 +242,6 @@ export default function Work() {
                                     </button>
 
                                     <button
-                                        className="cursor-pointer"
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()

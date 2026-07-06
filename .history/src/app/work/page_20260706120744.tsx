@@ -57,7 +57,6 @@ export default function Work() {
                         descripcion: d.descripcion ?? "",
                         imagenes: d.imagenes ?? [],
                         categoria: d.categoria ?? [],
-                        featured: d.featured ?? false
                     }
                 })
 
@@ -241,7 +240,6 @@ export default function Work() {
                             {user && (
                                 <span className="flex gap-3 text-xs">
                                     <button
-                                        className="cursor-pointer"
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()
@@ -252,7 +250,6 @@ export default function Work() {
                                     </button>
 
                                     <button
-                                        className="cursor-pointer"
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()

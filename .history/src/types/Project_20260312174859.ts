@@ -20,5 +20,4 @@ export type Project = {
     reel?: string;
 
     credits?: Credit[];
-    featured?: boolean;
 };

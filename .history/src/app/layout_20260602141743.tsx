@@ -4,12 +4,6 @@ import ReduxProvider from "@/store/provider"
 import { IBM_Plex_Mono } from "next/font/google"
 import { Inter } from "next/font/google"
 import ProjectInitializer from "./components/ProjectInitializer"
-import type { Metadata } from "next"
-
-export const metadata: Metadata = {
-  title: "TERRIER FILM",
-  description: "...",
-};
 
 const inter = Inter({
   subsets: ["latin"],

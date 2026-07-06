@@ -63,7 +63,7 @@ useEffect(() => {
     if (!mounted) return null
 
     return (
-        <header className="fixed inset-0 z-[9999] pointer-events-none mx-20">
+        <header className="fixed inset-0 z-[9999] pointer-events-none mx-40">
             {(loading || exiting) && (
                 <div
                     className={`
@@ -102,7 +102,7 @@ useEffect(() => {
 
                         {/* 🔥 HEADER REAL */}
                         <div
-                className={`fixed inset-0 mx-30
+                className={`fixed inset-0
                     transition-all duration-700 ease-in-out
                     ${loading ? "opacity-0 scale-105" : "opacity-100 scale-100"}
                 `}
