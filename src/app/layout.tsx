@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ReduxProvider>
           <ProjectInitializer />
 
-          <main className="relative w-screen h-screen overflow-hidden">
+          <main className="relative w-screen h-screen">
             {children}
           </main>
 

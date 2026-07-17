@@ -18,7 +18,7 @@ export default function Carousel() {
     const radiusY = 250
 
     return (
-        <div className="relative w-[300px] h-[500px]">
+        <div className="md:flex hidden relative w-[300px] h-[500px]">
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <svg width="400" height="420" viewBox="0 0 320 520">
                     <path

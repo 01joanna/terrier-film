@@ -1,5 +1,5 @@
 "use client"
-import { motion, Variants } from "framer-motion" 
+import { motion, Variants } from "framer-motion"
 
 export default function About() {
 
@@ -11,7 +11,7 @@ export default function About() {
             },
         },
     }
-    
+
     const block: Variants = {
         hidden: {
             opacity: 0,
@@ -28,7 +28,7 @@ export default function About() {
             },
         },
     }
-    
+
     const line: Variants = {
         hidden: {
             opacity: 0,
@@ -46,23 +46,24 @@ export default function About() {
 
     return (
         <motion.section
-            className="w-screen min-h-screen flex flex-col px-20 py-20 gap-20"
+            className="w-screen min-h-screen md:h-screen flex flex-col md:px-20 px-10 gap-20 pt-40 overflow-y-auto md:overflow-hidden"
             variants={container}
             initial="hidden"
             animate="show"
         >
             {/* TEXT BLOCK */}
-            <motion.div className="w-4/5 mt-20" variants={block}>
+            <motion.div className="md:w-3/6 w-full" variants={block}>
                 <motion.p
                     className="text-justify text-sm font-thin font-plex leading-relaxed"
                 >
-                    {`TERRIER FILM is a lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis libero condimentum, suscipit quam vel, efficitur magna.`}
+                    We are a production company based in Barcelona, made up of a collective of directors and creatives from various audiovisual disciplines. An eclectic creative force that combines diverse perspectives to explore every idea and always take it one step further. 
+                    <br/><br/>With a solid track record in music videos, fashion films, and advertising, we approach each project with a cinematic eye, seeking images that connect, surprise, and linger in the memory.
                 </motion.p>
             </motion.div>
 
             {/* CONTACT BLOCK */}
-            <motion.div className="w-full flex text-sm" variants={block}>
-                <div className="w-1/2">
+            <motion.div className="w-full flex md:flex-row flex-col text-sm md:gap-0 gap-10 md:mb-0 mb-20" variants={block}>
+                <div className="w-1/3">
                     <h3 className="uppercase text-gray-200 font-thin mb-4">
                         Contact
                     </h3>
@@ -96,7 +97,7 @@ export default function About() {
 
                 {/* OFFICE BLOCK */}
                 <div className="flex flex-col gap-20 font-plex">
-                    <motion.div variants={block}>
+                    {/* <motion.div variants={block}>
                         <h3 className="uppercase text-gray-200 font-thin mb-4">
                             Office
                         </h3>
@@ -106,7 +107,7 @@ export default function About() {
                             <motion.p variants={line}>08010 Barcelona</motion.p>
                             <motion.p variants={line}>Barcelona, España</motion.p>
                         </motion.div>
-                    </motion.div>
+                    </motion.div> */}
 
                     <motion.div className="flex flex-col font-thin uppercase" variants={block}>
                         <motion.a variants={line}>Vimeo</motion.a>
