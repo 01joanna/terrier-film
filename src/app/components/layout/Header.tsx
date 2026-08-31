@@ -1,12 +1,12 @@
 
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import Logo from "./Logo"
 import { useEffect, useState } from "react"
 import MobileHeader from "./MobileHeader"
+import LoadingScreen from "./LoadingScreen"
 
 export default function Header() {
     const pathname = usePathname()
@@ -18,52 +18,6 @@ export default function Header() {
     const [exiting, setExiting] = useState(false)
     const [progress, setProgress] = useState(0)
     const [mounted, setMounted] = useState(false)
-
-    useEffect(() => {
-        setMounted(true)
-    }, [])
-
-    useEffect(() => {
-        if (!mounted) return
-
-        const already = sessionStorage.getItem(
-            "site-loaded-once"
-        )
-
-        if (already) {
-            setLoading(false)
-            setProgress(100)
-            return
-        }
-
-        let value = 0
-
-        const interval = setInterval(() => {
-            value += Math.random() * 7
-
-            if (value >= 99) {
-                value = 100
-                setProgress(100)
-                clearInterval(interval)
-
-                setExiting(true)
-
-                setTimeout(() => {
-                    setLoading(false)
-                    sessionStorage.setItem(
-                        "site-loaded-once",
-                        "true"
-                    )
-                }, 600)
-            }
-
-            setProgress(
-                Math.min(100, Math.floor(value))
-            )
-        }, 80)
-
-        return () => clearInterval(interval)
-    }, [mounted])
 
     const links = [
         {
@@ -80,88 +34,139 @@ export default function Header() {
         },
     ]
 
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    useEffect(() => {
+        if (!mounted) return
+
+        const alreadyLoaded = sessionStorage.getItem("site-loaded-once") 
+        if (alreadyLoaded) { 
+            setLoading(false) 
+            setProgress(100) 
+            return 
+        }
+
+        const isMobile = window.innerWidth < 768
+
+        let progressValue = 0
+        let videoReady = !isMobile
+        let minimumTimePassed = false
+        let finished = false
+
+        const MINIMUM_TIME = 2200
+        const MAXIMUM_TIME = 8000
+
+        const finishLoading = () => {
+            if (
+                finished ||
+                !minimumTimePassed ||
+                !videoReady
+            ) {
+                return
+            }
+
+            finished = true
+
+            const finishInterval = setInterval(() => {
+                progressValue += 1
+
+                setProgress(
+                    Math.min(
+                        100,
+                        Math.floor(progressValue)
+                    )
+                )
+
+                if (progressValue >= 100) {
+                    clearInterval(finishInterval)
+
+                    setExiting(true)
+
+                    setTimeout(() => {
+                        setLoading(false)
+                    }, 700)
+                }
+            }, 35)
+        }
+
+        const minimumTimer = setTimeout(() => {
+            minimumTimePassed = true
+            finishLoading()
+        }, MINIMUM_TIME)
+
+        const safetyTimer = setTimeout(() => {
+            videoReady = true
+            minimumTimePassed = true
+            finishLoading()
+        }, MAXIMUM_TIME)
+
+        const progressInterval = setInterval(() => {
+            if (progressValue < 85) {
+                progressValue += 1
+
+                setProgress(
+                    Math.min(
+                        85,
+                        Math.floor(progressValue)
+                    )
+                )
+            }
+        }, 45)
+
+        const handleVideoReady = () => {
+            videoReady = true
+            finishLoading()
+        }
+
+        if (isMobile) {
+            window.addEventListener(
+                "home-video-ready",
+                handleVideoReady
+            )
+        }
+
+        return () => {
+            clearTimeout(minimumTimer)
+            clearTimeout(safetyTimer)
+            clearInterval(progressInterval)
+
+            window.removeEventListener(
+                "home-video-ready",
+                handleVideoReady
+            )
+        }
+    }, [mounted])
+
     if (isProjectDetail) return null
+
     if (!mounted) return null
 
     return (
         <header className="fixed inset-0 z-[9999] pointer-events-none">
 
-            {(loading || exiting) && (
-                <div
-                    className={`
-                        fixed inset-0
-                        bg-black
-                        flex flex-col
-                        items-center
-                        justify-center
-                        text-white
-                        transition-all
-                        duration-1000
-                        ease-[cubic-bezier(.22,1,.36,1)]
-                        ${
-                            exiting
-                                ? "opacity-0 scale-105 blur-sm"
-                                : "opacity-100 scale-100 blur-0"
-                        }
-                    `}
-                >
-                    <div
-                        className={`
-                            transition-all
-                            duration-700
-                            ease-[cubic-bezier(.22,1,.36,1)]
-                            ${
-                                exiting
-                                    ? "opacity-0 translate-y-2"
-                                    : "opacity-100"
-                            }
-                        `}
-                    >
-                        <Image
-                            src="/logo.png"
-                            alt="logo"
-                            width={400}
-                            height={400}
-                        />
-                    </div>
-
-                    <div
-                        className={`
-                            text-xs
-                            tracking-[0.3em]
-                            font-roboto
-                            font-light
-                            mt-6
-                            opacity-80
-                            transition-all
-                            duration-700
-                            ease-[cubic-bezier(.22,1,.36,1)]
-                            ${
-                                exiting
-                                    ? "opacity-0 translate-y-2"
-                                    : "opacity-80"
-                            }
-                        `}
-                    >
-                        {progress}%
-                    </div>
-                </div>
+            {loading && (
+                <LoadingScreen
+                    progress={progress}
+                    exiting={exiting}
+                />
             )}
 
             {!loading && (
-                <>
+                <div className="relative z-[10001]">
+
                     {/* DESKTOP */}
 
                     <div
-                        className={`
-                            hidden md:block
+                        className="
+                            hidden
+                            md:block
                             pointer-events-none
-                            fixed inset-0
+                            fixed
+                            inset-0
                             md:mx-30
-                            transition-all
-                            duration-700
-                            ease-in-out
-                        `}
+                        "
                     >
                         <Logo />
 
@@ -181,48 +186,64 @@ export default function Header() {
                                 }
                             `}
                         >
-                            <nav className="uppercase text-xs text-white opacity-80 font-plex font-light tracking-[0.1rem]">
+                            <nav
+                                className="
+                                    uppercase
+                                    text-xs
+                                    text-white
+                                    opacity-80
+                                    font-plex
+                                    font-light
+                                    tracking-[0.1rem]
+                                "
+                            >
                                 <ul className="flex gap-9">
-                                    {links.map(
-                                        (link) => {
-                                            const isActive =
-                                                pathname ===
-                                                link.href
+                                    {links.map((link) => {
+                                        const isActive =
+                                            pathname === link.href
 
-                                            return (
-                                                <li
-                                                    key={
-                                                        link.href
-                                                    }
-                                                    className="relative flex items-center"
+                                        return (
+                                            <li
+                                                key={link.href}
+                                                className="
+                                                    relative
+                                                    flex
+                                                    items-center
+                                                "
+                                            >
+                                                {isActive && (
+                                                    <span
+                                                        className="
+                                                            absolute
+                                                            -left-3
+                                                            top-1/2
+                                                            -translate-y-1/2
+                                                            w-1
+                                                            h-1
+                                                            rounded-full
+                                                            bg-white
+                                                        "
+                                                    />
+                                                )}
+
+                                                <Link
+                                                    href={link.href}
+                                                    className={`
+                                                        transition-all
+                                                        duration-300
+                                                        mix-blend-difference
+                                                        ${
+                                                            isActive
+                                                                ? "text-white opacity-100"
+                                                                : "text-white opacity-70"
+                                                        }
+                                                    `}
                                                 >
-                                                    {isActive && (
-                                                        <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-white" />
-                                                    )}
-
-                                                    <Link
-                                                        href={
-                                                            link.href
-                                                        }
-                                                        className={`
-                                                            transition-all
-                                                            duration-300
-                                                            mix-blend-difference
-                                                            ${
-                                                                isActive
-                                                                    ? "text-white opacity-100"
-                                                                    : "text-white opacity-70"
-                                                            }
-                                                        `}
-                                                    >
-                                                        {
-                                                            link.label
-                                                        }
-                                                    </Link>
-                                                </li>
-                                            )
-                                        }
-                                    )}
+                                                    {link.label}
+                                                </Link>
+                                            </li>
+                                        )
+                                    })}
                                 </ul>
                             </nav>
                         </div>
@@ -230,14 +251,25 @@ export default function Header() {
 
                     {/* MOBILE */}
 
-                    <div className="md:hidden pointer-events-auto">
+                    <div
+                        className="
+                            md:hidden
+                            pointer-events-auto
+                            fixed
+                            top-0
+                            left-0
+                            right-0
+                        "
+                    >
                         <MobileHeader
                             links={links}
                             pathname={pathname}
                         />
                     </div>
-                </>
+
+                </div>
             )}
+
         </header>
     )
 }

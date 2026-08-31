@@ -40,8 +40,8 @@ export default function MobileHome() {
             featured.length
             : 0
 
-            const nextProject = featured[nextIndex]
-            const previousProject = featured[previousIndex]
+    const nextProject = featured[nextIndex]
+    const previousProject = featured[previousIndex]
 
     const changeProject = (index: number) => {
         if (
@@ -142,23 +142,28 @@ export default function MobileHome() {
                 <iframe
                     key={currentProject.id}
                     src={`${currentProject.video}?autoplay=1&muted=1&background=1`}
+                    onLoad={() => {
+                        window.dispatchEvent(
+                            new Event("home-video-ready")
+                        )
+                    }}
                     className={`
-                        absolute
-                        top-1/2
-                        left-1/2
-                        -translate-x-1/2
-                        -translate-y-1/2
-                        w-[177.78vh]
-                        h-screen
-                        border-0
-                        transition-opacity
-                        duration-700
-                        ease-[cubic-bezier(.22,1,.36,1)]
-                        ${transitioning
+        absolute
+        top-1/2
+        left-1/2
+        -translate-x-1/2
+        -translate-y-1/2
+        w-[177.78vh]
+        h-screen
+        border-0
+        transition-opacity
+        duration-700
+        ease-[cubic-bezier(.22,1,.36,1)]
+        ${transitioning
                             ? "opacity-0"
                             : "opacity-100"
                         }
-                    `}
+    `}
                     allow="autoplay; fullscreen"
                 />
 
