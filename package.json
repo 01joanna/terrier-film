@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
-    "@vimeo/player": "^2.30.3",
+    "@vimeo/player": "^2.30.4",
     "firebase": "^12.9.0",
     "framer-motion": "^12.40.0",
     "next": "^16.2.9",

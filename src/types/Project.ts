@@ -21,4 +21,5 @@ export type Project = {
 
     credits?: Credit[];
     featured?: boolean;
+
 };
