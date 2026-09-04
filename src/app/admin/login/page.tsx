@@ -26,25 +26,25 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full h-screen justify-center items-center">
             <input
                 type="email"
-                placeholder="Email"
+                placeholder="EMAIL"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="border p-3 w-[40%] rounded-sm"
+                className="border border-gray-700 p-3 w-[20%] rounded-sm text-xs"
             />
 
             <input
                 type="password"
-                placeholder="Password"
+                placeholder="PASSWORD"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="border p-3 w-[40%] rounded-sm"
+                className="border p-3 border-gray-700 w-[20%] rounded-sm text-xs"
             />
 
             {error && <p className="text-red-500 text-xs">{error}</p>}
 
             <button
                 type="submit"
-                className="bg-white text-black py-3 px-20 rounded-sm "
+                className="uppercase text-white border text-xs py-3 px-20 rounded-sm border-gray-700"
             >
                 Entrar
             </button>

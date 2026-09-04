@@ -7,9 +7,13 @@ import Logo from "./Logo"
 import { useEffect, useState } from "react"
 import MobileHeader from "./MobileHeader"
 import LoadingScreen from "./LoadingScreen"
+import { signOut } from "firebase/auth"
+import { auth } from "@/lib/firebase"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function Header() {
     const pathname = usePathname()
+    const { user } = useAuth()
 
     const isHome = pathname === "/"
     const isProjectDetail = pathname.startsWith("/project/")
@@ -18,6 +22,7 @@ export default function Header() {
     const [exiting, setExiting] = useState(false)
     const [progress, setProgress] = useState(0)
     const [mounted, setMounted] = useState(false)
+    const [pageReady, setPageReady] = useState(false)
 
     const links = [
         {
@@ -41,11 +46,16 @@ export default function Header() {
     useEffect(() => {
         if (!mounted) return
 
-        const alreadyLoaded = sessionStorage.getItem("site-loaded-once") 
-        if (alreadyLoaded) { 
-            setLoading(false) 
-            setProgress(100) 
-            return 
+        const alreadyLoaded = sessionStorage.getItem("site-loaded-once")
+        if (alreadyLoaded) {
+            setLoading(false)
+            setProgress(100)
+
+            setTimeout(() => {
+                setPageReady(true)
+            }, 100)
+
+            return
         }
 
         const isMobile = window.innerWidth < 768
@@ -81,11 +91,16 @@ export default function Header() {
 
                 if (progressValue >= 100) {
                     clearInterval(finishInterval)
+                    sessionStorage.setItem("site-loaded-once", "true")
 
                     setExiting(true)
 
                     setTimeout(() => {
                         setLoading(false)
+
+                        setTimeout(() => {
+                            setPageReady(true)
+                        }, 500)
                     }, 700)
                 }
             }, 35)
@@ -143,6 +158,14 @@ export default function Header() {
 
     if (!mounted) return null
 
+    const handleLogout = async () => {
+        try {
+            await signOut(auth)
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error)
+        }
+    }
+
     return (
         <header className="fixed inset-0 z-[9999] pointer-events-none">
 
@@ -153,7 +176,7 @@ export default function Header() {
                 />
             )}
 
-            {!loading && (
+            {pageReady && (
                 <div className="relative z-[10001]">
 
                     {/* DESKTOP */}
@@ -179,10 +202,9 @@ export default function Header() {
                                 duration-1000
                                 ease-[cubic-bezier(.22,1,.36,1)]
                                 mix-blend-difference
-                                ${
-                                    isHome
-                                        ? "top-1/2 -translate-y-1/2"
-                                        : "top-10"
+                                ${isHome
+                                    ? "top-1/2 -translate-y-1/2"
+                                    : "top-10"
                                 }
                             `}
                         >
@@ -199,51 +221,66 @@ export default function Header() {
                             >
                                 <ul className="flex gap-9">
                                     {links.map((link) => {
-                                        const isActive =
-                                            pathname === link.href
+                                        const isActive = pathname === link.href
 
                                         return (
                                             <li
                                                 key={link.href}
                                                 className="
-                                                    relative
-                                                    flex
-                                                    items-center
-                                                "
+                    relative
+                    flex
+                    items-center
+                "
                                             >
                                                 {isActive && (
                                                     <span
                                                         className="
-                                                            absolute
-                                                            -left-3
-                                                            top-1/2
-                                                            -translate-y-1/2
-                                                            w-1
-                                                            h-1
-                                                            rounded-full
-                                                            bg-white
-                                                        "
+                            absolute
+                            -left-3
+                            top-1/2
+                            -translate-y-1/2
+                            w-1
+                            h-1
+                            rounded-full
+                            bg-white
+                        "
                                                     />
                                                 )}
 
                                                 <Link
                                                     href={link.href}
                                                     className={`
-                                                        transition-all
-                                                        duration-300
-                                                        mix-blend-difference
-                                                        ${
-                                                            isActive
-                                                                ? "text-white opacity-100"
-                                                                : "text-white opacity-70"
+                        transition-all
+                        duration-300
+                        mix-blend-difference
+                        ${isActive
+                                                            ? "text-white opacity-100"
+                                                            : "text-white opacity-70"
                                                         }
-                                                    `}
+                    `}
                                                 >
                                                     {link.label}
                                                 </Link>
                                             </li>
                                         )
                                     })}
+
+                                    {user && (
+                                        <li>
+                                            <button
+                                                onClick={handleLogout}
+                                                className="
+                    text-white
+                    opacity-70
+                    transition-all
+                    duration-300
+                    hover:opacity-100
+                "
+                                            >
+                                                LOGOUT
+                                            </button>
+                                        </li>
+                                    )}
                                 </ul>
                             </nav>
                         </div>

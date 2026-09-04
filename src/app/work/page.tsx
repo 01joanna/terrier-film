@@ -176,7 +176,7 @@ export default function Work() {
                             <li
                                 key={value}
                                 onClick={() => setActive(value)}
-                                className={`cursor-pointer transition ${
+                                className={`cursor-pointer transition hidden ${
                                     isActive
                                         ? "opacity-100 font-light"
                                         : "opacity-60 font-thin hover:opacity-100"
