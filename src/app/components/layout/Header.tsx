@@ -79,19 +79,21 @@ export default function Header() {
 
             finished = true
 
-            const finishInterval = setInterval(() => {
-                progressValue += 1
+            const finishProgress = () => {
+                const increment = Math.random() < 0.7 ? 2 : 3
 
-                setProgress(
-                    Math.min(
-                        100,
-                        Math.floor(progressValue)
-                    )
+                progressValue = Math.min(
+                    100,
+                    progressValue + increment
                 )
 
+                setProgress(Math.floor(progressValue))
+
                 if (progressValue >= 100) {
-                    clearInterval(finishInterval)
-                    sessionStorage.setItem("site-loaded-once", "true")
+                    sessionStorage.setItem(
+                        "site-loaded-once",
+                        "true"
+                    )
 
                     setExiting(true)
 
@@ -102,8 +104,19 @@ export default function Header() {
                             setPageReady(true)
                         }, 500)
                     }, 700)
+
+                    return
                 }
-            }, 35)
+
+                const delay = 80 + Math.random() * 70
+
+                setTimeout(
+                    finishProgress,
+                    delay
+                )
+            }
+
+            finishProgress()
         }
 
         const minimumTimer = setTimeout(() => {
@@ -117,18 +130,40 @@ export default function Header() {
             finishLoading()
         }, MAXIMUM_TIME)
 
-        const progressInterval = setInterval(() => {
-            if (progressValue < 85) {
-                progressValue += 1
+        let progressTimeout: ReturnType<typeof setTimeout>
 
-                setProgress(
-                    Math.min(
-                        85,
-                        Math.floor(progressValue)
-                    )
-                )
+        const updateProgress = () => {
+            if (progressValue >= 85) return
+
+            const random = Math.random()
+
+            let increment = 2
+
+            if (random < 0.15) {
+                increment = 1
+            } else if (random > 0.90) {
+                increment = 3
             }
-        }, 45)
+
+            progressValue = Math.min(
+                85,
+                progressValue + increment
+            )
+
+            setProgress(Math.floor(progressValue))
+
+            const delay = 80 + Math.random() * 80
+
+            progressTimeout = setTimeout(
+                updateProgress,
+                delay
+            )
+        }
+
+        progressTimeout = setTimeout(
+            updateProgress,
+            120
+        )
 
         const handleVideoReady = () => {
             videoReady = true
@@ -145,7 +180,7 @@ export default function Header() {
         return () => {
             clearTimeout(minimumTimer)
             clearTimeout(safetyTimer)
-            clearInterval(progressInterval)
+            clearTimeout(progressTimeout)
 
             window.removeEventListener(
                 "home-video-ready",
