@@ -73,12 +73,12 @@ export default function About() {
                             {
                                 name: "Alejo Ayala",
                                 role: "Founder, Director",
-                                mail: "alejo@gmail.com",
+                                mail: "Alejoayalahdz@gmail.com",
                             },
                             {
                                 name: "Arturo Casaú",
                                 role: "Director",
-                                mail: "arturo@gmail.com",
+                                mail: "Arturocasau@gmail.com",
                             },
                             {
                                 name: "Sergi Pascual",
