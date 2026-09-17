@@ -19,7 +19,7 @@ export default function Logo() {
                     
     `}
             >
-                <Image src="/logo.png" alt="logo" width={200} height={200} />
+                <Image src="/logo.png" alt="logo" width={150} height={150} />
             </div>
     )
 }

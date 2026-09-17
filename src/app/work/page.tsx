@@ -300,7 +300,7 @@ export default function Work() {
                 </div>
             </div>
 
-            <div className="md:hidden pt-[25vh]">
+            <div className="md:hidden pt-[14vh]">
     <div className="flex flex-col">
                     {filteredProjects.map((project, index) => (
                         <motion.article
